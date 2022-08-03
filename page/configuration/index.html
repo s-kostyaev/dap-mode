@@ -1296,12 +1296,45 @@ LLDB configuration.</p>
     --accept-multiclient attach 123 -l :1080</code> (see <a href="https://github.com/go-delve/delve/tree/master/Documentation/usage#using-delve">dlv usage
     documentation</a>
     for more command-line options) and select "Go Dlv Remote Debug"</li>
+<li>if your build environment differs from your development
+    environment (for example, you build project inside docker
+    container or in CI pipeline) or you use <code>-trimpath</code> build
+    flag you can use <code>substitutePath</code>. <code>M-x</code>
+    <code>dap-debug-edit-template</code> then select some template and
+    add <code>substitutePath</code> option to it:
+    <div class="highlight"><pre><span></span><code><span class="p">(</span><span class="nv">dap-register-debug-template</span>
+ <span class="s">&quot;Launch Executable trimmed path&quot;</span>
+ <span class="p">(</span><span class="nf">list</span> <span class="nb">:type</span> <span class="s">&quot;go&quot;</span>
+       <span class="nb">:request</span> <span class="s">&quot;launch&quot;</span>
+       <span class="nb">:name</span> <span class="s">&quot;Launch Executable trimmed path&quot;</span>
+       <span class="nb">:mode</span> <span class="s">&quot;exec&quot;</span>
+       <span class="nb">:program</span> <span class="no">nil</span>
+       <span class="nb">:args</span> <span class="no">nil</span>
+       <span class="nb">:env</span> <span class="no">nil</span>
+       <span class="nb">:substitutePath</span> <span class="p">(</span><span class="nf">vector</span> <span class="p">(</span><span class="nv">ht</span> <span class="p">(</span><span class="s">&quot;from&quot;</span> <span class="s">&quot;/home/user/projects/tribonacci&quot;</span><span class="p">)</span> <span class="p">(</span><span class="s">&quot;to&quot;</span> <span class="s">&quot;github.com/s-kostyaev/tribonacci&quot;</span><span class="p">)))))</span>
+</code></pre></div>
+    and after evaluation you can select this edited template
+    and debug as usual. You also can use
+    <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Directory-Variables.html">dir-locals</a>
+    to save this template for your project. Create
+    <code>.dir-locals.el</code> in root directory of your project:
+    <div class="highlight"><pre><span></span><code><span class="p">((</span><span class="nv">go-mode</span>  <span class="o">.</span> <span class="p">((</span><span class="nf">eval</span> <span class="o">.</span> <span class="p">(</span><span class="k">progn</span>
+                        <span class="p">(</span><span class="nv">dap-register-debug-template</span>
+                         <span class="s">&quot;Remote debug in docker container&quot;</span>
+                         <span class="p">(</span><span class="nf">list</span> <span class="nb">:type</span> <span class="s">&quot;go&quot;</span>
+                               <span class="nb">:request</span> <span class="s">&quot;attach&quot;</span>
+                               <span class="nb">:name</span> <span class="s">&quot;Remote debug in docker container&quot;</span>
+                               <span class="nb">:mode</span> <span class="s">&quot;remote&quot;</span>
+                               <span class="nb">:substitutePath</span> <span class="p">(</span><span class="nf">vector</span> <span class="p">(</span><span class="nv">ht</span> <span class="p">(</span><span class="s">&quot;from&quot;</span> <span class="s">&quot;/home/user/projects/tribonacci&quot;</span><span class="p">)</span> <span class="p">(</span><span class="s">&quot;to&quot;</span> <span class="s">&quot;/app&quot;</span><span class="p">))))))))))</span>
+</code></pre></div></li>
 </ul>
 </li>
 <li>
 <p>Trouble shooting</p>
 <ul>
 <li>put (setq dap-print-io t) and check messages buffer</li>
+<li>add <code>--log --log-output debugger,rpc,dap</code> to <code>dlv</code> command
+    and check <code>dlv</code> logs</li>
 <li>e.g linter can return note at debug session response
     resulting debug session to fail</li>
 </ul>
@@ -1310,6 +1343,7 @@ LLDB configuration.</p>
 </li>
 </ol>
 <h2 id="go-vs-code-debug-adapter">Go (VS Code debug adapter)<a class="headerlink" href="#go-vs-code-debug-adapter" title="Permanent link">#</a></h2>
+<p>This debug adapter is deprecated. Use <code>dap-dlv-go</code> instead.</p>
 <ol>
 <li>
 <p>Installation</p>
@@ -1582,7 +1616,7 @@ Core Attach (Console)" from <code>dap-debug</code> menu.</p>
   <small>
     
       Last update:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">May 4, 2022</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 12, 2022</span>
       
     
   </small>
